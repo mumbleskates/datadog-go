@@ -7,6 +7,12 @@
 
 `datadog-go` is a library that provides a [DogStatsD](https://docs.datadoghq.com/developers/dogstatsd/?code-lang=go) client in Golang.
 
+This is a fork of that library which adds support for floating point `Count`
+metrics and little else. Releases are tagged with the major version at +100 from
+the upstream library, and differences in functionality are minimal. The `Client`
+struct and interface provide a `Countf()` method and aggregate metrics in
+floating point instead; everything is otherwise the same.
+
 Go 1.12+ is officially supported. Older versions might work but are not tested.
 
 The following documentation is available:
