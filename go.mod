@@ -1,6 +1,6 @@
-module github.com/DataDog/datadog-go/v5
+module github.com/mumbleskates/datadog-go/v105
 
-go 1.13
+go 1.22
 
 require (
 	github.com/Microsoft/go-winio v0.5.0
