@@ -110,7 +110,7 @@ func (w *worker) writeMetricUnsafe(m metric) error {
 	case gauge:
 		return w.buffer.writeGauge(m.namespace, m.globalTags, m.name, m.fvalue, m.tags, m.rate, m.timestamp)
 	case count:
-		return w.buffer.writeCount(m.namespace, m.globalTags, m.name, m.ivalue, m.tags, m.rate, m.timestamp)
+		return w.buffer.writeCount(m.namespace, m.globalTags, m.name, m.fvalue, m.tags, m.rate, m.timestamp)
 	case histogram:
 		return w.buffer.writeHistogram(m.namespace, m.globalTags, m.name, m.fvalue, m.tags, m.rate)
 	case distribution:

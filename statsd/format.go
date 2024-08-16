@@ -106,17 +106,6 @@ func appendFloatMetric(buffer []byte, typeSymbol []byte, namespace string, globa
 	return buffer
 }
 
-func appendIntegerMetric(buffer []byte, typeSymbol []byte, namespace string, globalTags []string, name string, value int64, tags []string, rate float64) []byte {
-	buffer = appendHeader(buffer, namespace, name)
-	buffer = strconv.AppendInt(buffer, value, 10)
-	buffer = append(buffer, '|')
-	buffer = append(buffer, typeSymbol...)
-	buffer = appendRate(buffer, rate)
-	buffer = appendTags(buffer, globalTags, tags)
-	buffer = appendContainerID(buffer)
-	return buffer
-}
-
 func appendStringMetric(buffer []byte, typeSymbol []byte, namespace string, globalTags []string, name string, value string, tags []string, rate float64) []byte {
 	buffer = appendHeader(buffer, namespace, name)
 	buffer = append(buffer, value...)
@@ -132,8 +121,8 @@ func appendGauge(buffer []byte, namespace string, globalTags []string, name stri
 	return appendFloatMetric(buffer, gaugeSymbol, namespace, globalTags, name, value, tags, rate, -1)
 }
 
-func appendCount(buffer []byte, namespace string, globalTags []string, name string, value int64, tags []string, rate float64) []byte {
-	return appendIntegerMetric(buffer, countSymbol, namespace, globalTags, name, value, tags, rate)
+func appendCount(buffer []byte, namespace string, globalTags []string, name string, value float64, tags []string, rate float64) []byte {
+	return appendFloatMetric(buffer, countSymbol, namespace, globalTags, name, value, tags, rate, -1)
 }
 
 func appendHistogram(buffer []byte, namespace string, globalTags []string, name string, value float64, tags []string, rate float64) []byte {

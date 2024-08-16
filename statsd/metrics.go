@@ -15,21 +15,21 @@ Those are metrics type that can be aggregated on the client side:
 */
 
 type countMetric struct {
-	value int64
+	value atomicFloat
 	name  string
 	tags  []string
 }
 
-func newCountMetric(name string, value int64, tags []string) *countMetric {
+func newCountMetric(name string, value float64, tags []string) *countMetric {
 	return &countMetric{
-		value: value,
+		value: atomicFloat64(value),
 		name:  name,
 		tags:  copySlice(tags),
 	}
 }
 
-func (c *countMetric) sample(v int64) {
-	atomic.AddInt64(&c.value, v)
+func (c *countMetric) sample(v float64) {
+	c.value.IncrementBy(v)
 }
 
 func (c *countMetric) flushUnsafe() metric {
@@ -38,7 +38,7 @@ func (c *countMetric) flushUnsafe() metric {
 		name:       c.name,
 		tags:       c.tags,
 		rate:       1,
-		ivalue:     c.value,
+		fvalue:     c.value.Float64(),
 	}
 }
 

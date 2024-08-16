@@ -21,8 +21,18 @@ func (n *NoOpClient) Count(name string, value int64, tags []string, rate float64
 	return nil
 }
 
+// Countf does nothing and returns nil
+func (n *NoOpClient) Countf(name string, value float64, tags []string, rate float64) error {
+	return nil
+}
+
 // CountWithTimestamp does nothing and returns nil
 func (n *NoOpClient) CountWithTimestamp(name string, value int64, tags []string, rate float64, timestamp time.Time) error {
+	return nil
+}
+
+// CountfWithTimestamp does nothing and returns nil
+func (n *NoOpClient) CountfWithTimestamp(name string, value float64, tags []string, rate float64, timestamp time.Time) error {
 	return nil
 }
 
@@ -103,7 +113,7 @@ func (n *NoOpClient) GetTelemetry() Telemetry {
 
 // Verify that NoOpClient implements the ClientInterface.
 // https://golang.org/doc/faq#guarantee_satisfies_interface
-var _ ClientInterface = &NoOpClient{}
+var _ ClientInterfaceExtended = &NoOpClient{}
 
 // NoOpClientDirect implements ClientDirectInterface and does nothing.
 type NoOpClientDirect struct {

@@ -36,14 +36,14 @@ func TestFlushUnsafeCountMetricSample(t *testing.T) {
 	c := newCountMetric("test", 21, []string{"tag1", "tag2"})
 	m := c.flushUnsafe()
 	assert.Equal(t, m.metricType, count)
-	assert.Equal(t, m.ivalue, int64(21))
+	assert.Equal(t, m.fvalue, float64(21))
 	assert.Equal(t, m.name, "test")
 	assert.Equal(t, m.tags, []string{"tag1", "tag2"})
 
 	c.sample(12)
 	m = c.flushUnsafe()
 	assert.Equal(t, m.metricType, count)
-	assert.Equal(t, m.ivalue, int64(33))
+	assert.Equal(t, m.fvalue, float64(33))
 	assert.Equal(t, m.name, "test")
 	assert.Equal(t, m.tags, []string{"tag1", "tag2"})
 }

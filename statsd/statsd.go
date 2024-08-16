@@ -156,7 +156,6 @@ type metric struct {
 	name       string
 	fvalue     float64
 	fvalues    []float64
-	ivalue     int64
 	svalue     string
 	evalue     *Event
 	scvalue    *ServiceCheck
@@ -261,6 +260,26 @@ type ClientInterface interface {
 	GetTelemetry() Telemetry
 }
 
+// The extended interface we have implemented in this fork, which has to be
+// separate from the untouched original interface since there are other packages
+// in the ecosystem use that depend on the original interface as-is.
+type ClientInterfaceExtended interface {
+	ClientInterface
+
+	// Countf tracks how many times something happened per second, with
+	// fractions.
+	Countf(name string, value float64, tags []string, rate float64) error
+
+	// CountfWithTimestamp tracks how many times something happened at the given
+	// second, with fractions.
+	// BETA - Please contact our support team for more information to use this feature: https://www.datadoghq.com/support/
+	// The value will bypass any aggregation on the client side and agent side, this is
+	// useful when sending points in the past.
+	//
+	// Minimum Datadog Agent version: 7.40.0
+	CountfWithTimestamp(name string, value float64, tags []string, rate float64, timestamp time.Time) error
+}
+
 type ErrorHandler func(error)
 
 // A Client is a handle for sending messages to dogstatsd.  It is safe to
@@ -305,7 +324,7 @@ type statsdTelemetry struct {
 
 // Verify that Client implements the ClientInterface.
 // https://golang.org/doc/faq#guarantee_satisfies_interface
-var _ ClientInterface = &Client{}
+var _ ClientInterfaceExtended = &Client{}
 
 func resolveAddr(addr string) string {
 	envPort := ""
@@ -716,8 +735,12 @@ func (c *Client) GaugeWithTimestamp(name string, value float64, tags []string, r
 	return c.send(metric{metricType: gauge, name: name, fvalue: value, tags: tags, rate: rate, globalTags: c.tags, namespace: c.namespace, timestamp: timestamp.Unix()})
 }
 
-// Count tracks how many times something happened per second.
 func (c *Client) Count(name string, value int64, tags []string, rate float64) error {
+	return c.Countf(name, float64(value), tags, rate)
+}
+
+// Count tracks how many times something happened per second.
+func (c *Client) Countf(name string, value float64, tags []string, rate float64) error {
 	if c == nil {
 		return ErrNoClient
 	}
@@ -725,7 +748,11 @@ func (c *Client) Count(name string, value int64, tags []string, rate float64) er
 	if c.agg != nil {
 		return c.agg.count(name, value, tags)
 	}
-	return c.send(metric{metricType: count, name: name, ivalue: value, tags: tags, rate: rate, globalTags: c.tags, namespace: c.namespace})
+	return c.send(metric{metricType: count, name: name, fvalue: value, tags: tags, rate: rate, globalTags: c.tags, namespace: c.namespace})
+}
+
+func (c *Client) CountWithTimestamp(name string, value int64, tags []string, rate float64, timestamp time.Time) error {
+	return c.CountfWithTimestamp(name, float64(value), tags, rate, timestamp)
 }
 
 // CountWithTimestamp tracks how many times something happened at the given second.
@@ -734,7 +761,7 @@ func (c *Client) Count(name string, value int64, tags []string, rate float64) er
 // useful when sending points in the past.
 //
 // Minimum Datadog Agent version: 7.40.0
-func (c *Client) CountWithTimestamp(name string, value int64, tags []string, rate float64, timestamp time.Time) error {
+func (c *Client) CountfWithTimestamp(name string, value float64, tags []string, rate float64, timestamp time.Time) error {
 	if c == nil {
 		return ErrNoClient
 	}
@@ -744,7 +771,7 @@ func (c *Client) CountWithTimestamp(name string, value int64, tags []string, rat
 	}
 
 	atomic.AddUint64(&c.telemetry.totalMetricsCount, 1)
-	return c.send(metric{metricType: count, name: name, ivalue: value, tags: tags, rate: rate, globalTags: c.tags, namespace: c.namespace, timestamp: timestamp.Unix()})
+	return c.send(metric{metricType: count, name: name, fvalue: value, tags: tags, rate: rate, globalTags: c.tags, namespace: c.namespace, timestamp: timestamp.Unix()})
 }
 
 // Histogram tracks the statistical distribution of a set of values on each host.

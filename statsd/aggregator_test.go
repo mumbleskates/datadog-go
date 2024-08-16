@@ -119,14 +119,14 @@ func TestAggregatorFlush(t *testing.T) {
 			name:       "countTest1",
 			tags:       tags,
 			rate:       1,
-			ivalue:     int64(31),
+			fvalue:     float64(31),
 		},
 		metric{
 			metricType: count,
 			name:       "countTest2",
 			tags:       tags,
 			rate:       1,
-			ivalue:     int64(1),
+			fvalue:     float64(1),
 		},
 		metric{
 			metricType: histogramAggregated,
@@ -262,7 +262,7 @@ func TestAggregatorFlushWithMaxSamplesPerContext(t *testing.T) {
 			name:       "countTest1",
 			tags:       tags,
 			rate:       1,
-			ivalue:     int64(31),
+			fvalue:     float64(31),
 		},
 		metric{
 			metricType: histogramAggregated,

@@ -209,7 +209,7 @@ func getContextAndTags(name string, tags []string) (string, string) {
 	return s, s[len(name)+len(nameSeparatorSymbol):]
 }
 
-func (a *aggregator) count(name string, value int64, tags []string) error {
+func (a *aggregator) count(name string, value float64, tags []string) error {
 	context := getContext(name, tags)
 	a.countsM.RLock()
 	if count, found := a.counts[context]; found {
