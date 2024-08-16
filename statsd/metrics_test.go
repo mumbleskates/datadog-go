@@ -12,14 +12,14 @@ import (
 
 func TestNewCountMetric(t *testing.T) {
 	c := newCountMetric("test", 21, []string{"tag1", "tag2"})
-	assert.Equal(t, c.value, int64(21))
+	assert.Equal(t, c.value.Float64(), float64(21))
 	assert.Equal(t, c.name, "test")
 	assert.Equal(t, c.tags, []string{"tag1", "tag2"})
 }
 
 func TestNewCountMetricWithTimestamp(t *testing.T) {
 	c := newCountMetric("test", 21, []string{"tag1", "tag2"})
-	assert.Equal(t, c.value, int64(21))
+	assert.Equal(t, c.value.Float64(), float64(21))
 	assert.Equal(t, c.name, "test")
 	assert.Equal(t, c.tags, []string{"tag1", "tag2"})
 }
@@ -27,7 +27,7 @@ func TestNewCountMetricWithTimestamp(t *testing.T) {
 func TestCountMetricSample(t *testing.T) {
 	c := newCountMetric("test", 21, []string{"tag1", "tag2"})
 	c.sample(12)
-	assert.Equal(t, c.value, int64(33))
+	assert.Equal(t, c.value.Float64(), float64(33))
 	assert.Equal(t, c.name, "test")
 	assert.Equal(t, c.tags, []string{"tag1", "tag2"})
 }
