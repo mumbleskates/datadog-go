@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/DataDog/datadog-go/v5/statsd"
+	"github.com/mumbleskates/datadog-go/v105/statsd"
 )
 
 const writerNameUDP = "udp"
